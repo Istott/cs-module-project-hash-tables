@@ -21,7 +21,8 @@ class HashTable:
     """
 
     def __init__(self, capacity):
-        # Your code here
+        # Your code 
+        return
 
 
     def get_num_slots(self):
@@ -63,7 +64,12 @@ class HashTable:
         Implement this, and/or FNV-1.
         """
         # Your code here
+        hash = 5381
+        for x in key:
+            hash = (( hash << 5) + hash) + ord(x)
+        return hash & 0xFFFFFFFF
 
+        # hex(djb2(u'hello world, 世界'))  # '0xa6bd702fL'
 
     def hash_index(self, key):
         """

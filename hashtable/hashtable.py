@@ -22,7 +22,8 @@ class HashTable:
 
     def __init__(self, capacity):
         # Your code 
-        return
+        self.capacity = capacity
+        self.bucketArray = [None for i in range(capacity)]
 
 
     def get_num_slots(self):
@@ -36,6 +37,7 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        return self.capacity
 
 
     def get_load_factor(self):
@@ -65,11 +67,13 @@ class HashTable:
         """
         # Your code here
         hash = 5381
-        for x in key:
-            hash = (( hash << 5) + hash) + ord(x)
-        return hash & 0xFFFFFFFF
+        byteArray = key.encode('utf-8')
 
-        # hex(djb2(u'hello world, 世界'))  # '0xa6bd702fL'
+        for x in byteArray:
+            hash = (( hash * 33) ^ x) % 0x100000000
+
+        return hash
+
 
     def hash_index(self, key):
         """
@@ -88,6 +92,36 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        # val = self.get(key)
+        # if self.table[val] == None:
+        #     self.table[val] = key
+        # else:
+        #     if type(self.table[val]) == list:
+        #         self.table[val].append(key)
+        #     else:
+        #         self.table[val] = [self.table[val], key]
+
+
+        keyHash = djb2(key)
+        bucketIndex = keyHash % self.capacity
+
+        newNode = HashTableEntry(key, value)
+        existingNode = self.bucketArray[bucketIndex]
+
+        if existingNode:
+            lastNode = None
+            while existingNode:
+                if existingNode.key == key:
+                    # found existing key, replace value
+                    existingNode.value = value
+                    return
+                lastNode = existingNode
+                existingNode = existingNode.next
+            # if we get this far, we didn't find an existing key
+            # so just append the new node to the end of the bucket
+            lastNode.next = newNode
+        else:
+            self.bucketArray[bucketIndex] = newNode
 
 
     def delete(self, key):
@@ -99,6 +133,15 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        val = self.get(key)
+        if self.table[val] != None:
+            if type(self.table[val]) == list:
+                i = self.table[val].index(key)
+                self.table[val][i] = None
+            else:
+                self.table[val] = None
+        else:
+            KeyError()
 
 
     def get(self, key):
@@ -110,6 +153,24 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        # total = 0
+        # for i in range(len(key)):
+        #     total += ord(key[i]) * (7**i)
+        # return (len(key) * total) % 256
+
+        keyHash = djb2(key)
+        bucketIndex = keyHash % self.capacity
+
+        existingNode = self.bucketArray[bucketIndex]
+        
+        if existingNode:
+            while existingNode:
+                if existingNode.pair.key == key:
+                    return existingNode.pair.value
+                existingNode = existingNode.next
+
+        return None
+
 
 
     def resize(self, new_capacity):

@@ -66,6 +66,12 @@ class HashTable:
         Implement this, and/or FNV-1.
         """
         # Your code here
+        # hash_val = 5381
+        # for char in key:
+        #     hash_val = ((hash_val << 5) + hash_val) + ord(char)
+        # return hash_val & 0xFFFFFFFF
+
+
         hash = 5381
         byteArray = key.encode('utf-8')
 
@@ -133,15 +139,30 @@ class HashTable:
         Implement this.
         """
         # Your code here
-        val = self.get(key)
-        if self.table[val] != None:
-            if type(self.table[val]) == list:
-                i = self.table[val].index(key)
-                self.table[val][i] = None
-            else:
-                self.table[val] = None
-        else:
-            KeyError()
+        # val = self.get(key)
+        # if self.table[val] != None:
+        #     if type(self.table[val]) == list:
+        #         i = self.table[val].index(key)
+        #         self.table[val][i] = None
+        #     else:
+        #         self.table[val] = None
+        # else:
+        #     KeyError()
+
+        keyHash = djb2(key)
+        bucketIndex = keyHash % self.capacity
+
+        existingNode = self.bucketArray[bucketIndex]
+        if existingNode:
+            lastNode = None
+            while existingNode:
+                if existingNode.key == key:
+                    if lastNode:
+                        lastNode.next = existingNode.next
+                    else:
+                        self.bucket_array[bucketIndex] = existingNode.next
+                lastNode = existingNode
+                existingNode = existingNode.next
 
 
     def get(self, key):
@@ -162,7 +183,7 @@ class HashTable:
         bucketIndex = keyHash % self.capacity
 
         existingNode = self.bucketArray[bucketIndex]
-        
+
         if existingNode:
             while existingNode:
                 if existingNode.pair.key == key:

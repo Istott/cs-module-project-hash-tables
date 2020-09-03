@@ -1,6 +1,22 @@
 def word_count(s):
     # Your code here
 
+    ignoreThese = '" : ; , . - + = / \ | [ ] { }( ) * ^ &'.split(' ')
+    count = {}
+
+    for el in ignoreThese:
+        s = s.replace(el, '')
+
+    for word in s.split():
+        word = word.lower()
+
+        if word not in count:
+            count[word] = 0
+        
+        count[word] += 1
+    
+    return count
+
 
 
 if __name__ == "__main__":

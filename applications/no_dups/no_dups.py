@@ -1,5 +1,19 @@
 def no_dups(s):
     # Your code here
+    # dups = {}
+    # arr = s.split()
+    # noDupList = [word for word in arr if word not in dups]
+
+    noDupList = []
+
+    for word in s.split():
+        if word not in noDupList:
+            noDupList.append(word)
+        else:
+            continue
+    
+    return ' '.join(noDupList)
+
 
 
 
